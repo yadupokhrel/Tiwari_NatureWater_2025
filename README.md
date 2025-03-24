@@ -2,4 +2,5 @@ Scripts supporting Tiwari, A. D., Pokhrel, Y., et al. (2025). Similarities and d
 
 Codes also available via Zenodo [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15079279.svg)](https://doi.org/10.5281/zenodo.15079279)
 
-Data available via Figshare [![DOI](https://img.shields.io/badge/DOI-10.6084/m9.figshare.12345678.v1-blue)](https://doi.org/10.6084/m9.figshare.12345678.v1)
+Data available via Figshare [https://doi.org/10.6084/m9.figshare.12345678.v1](https://doi.org/10.6084/m9.figshare.12345678.v1)
+
