@@ -1,0 +1,124 @@
+#!/bin/csh -f
+
+## Nature Water, Fig. 5, September 15, 2024
+## By Amar Deep Tiwari (tiwaria6@msu.edu)
+
+
+gmtset MAP_FRAME_TYPE = plain
+gmt set FONT_ANNOT_PRIMARY = 12p,Helvetica,black
+##########################
+set OUTFILE = ForecastSkill.eps
+set Range = -R-180/180/-60/90
+#set Projection = -Jq1:250000000
+set Projection = -JN6i
+
+set Projection0 = -JX9.6i/4i
+
+############################### Agreemnts #########################
+
+sed 's/,/ /g' ../Results/MultimodelTrendsSeasonality/DIS/Basinwise_noofmodels_goodness_DIS_v4.txt >! tmp1
+awk '{print $1,$2,$3}' tmp1 > MAP
+
+csh process_xyz2grd_0.50.scr MAP MAP.grd
+
+grdimage MAP.grd $Projection $Range -X2 -Y25 -Cdis_model_agree_v2.cpt -K -P >! $OUTFILE#
+#pscoast $Projection $Range -W0.0001,100/100/100 -S255/255/255 -Xi -Yi -K -O >> $OUTFILE#
+psxy global_land.gmt $Projection $Range -W80/80/80 -Xi -Yi -K -O >> $OUTFILE#
+psxy mrb_basins_50k.gmt $Projection $Range -W50/50/50 -Xi -Yi -K -O >> $OUTFILE#
+
+
+pstext $Projection $Range -K -O -N << EOF >> $OUTFILE#
+-50 -40 18 0 4 TL @;black; Discharge@
+EOF
+psscale -D6.0i/1.30i/6v/0.8v -Cdis_model_agree_v2.cpt -Eb0.001f0.001 -B1 -O -K  >> $OUTFILE#
+
+pstext $Projection0 $Range -K -O -N << EOF >> $OUTFILE#
+-170 40 20 0 5 TL @;black; a
+
+50.75 -52.0 10 0 5 C @;black; 50
+50.75 -42.3 10 0 5 C @;black; 19.5
+50.75 -32.6 10 0 5 C @;black; 14
+50.75 -22.9 10 0 5 C @;black; 7
+50.75 -13.2 10 0 5 C @;black; 3.5
+50.75 -03.5 10 0 5 C @;black; 2
+50.75 006.2 10 0 5 C @;black; 3.5
+50.75 015.9 10 0 5 C @;black; 0.5 
+50.75 025.6 10 0 5 C @;black; 0
+EOF
+
+
+############################### TWS #########################
+
+sed 's/,/ /g' ../Results/MultimodelTrendsSeasonality/TWS/Basinwise_noofmodels_goodness.txt >! tmp1
+awk '{print $1,$2,$3}' tmp1 > MAP
+
+csh process_xyz2grd_0.50.scr MAP MAP.grd
+grdimage MAP.grd $Projection $Range -Xi -Y-7.5 -Ctws_model_agree.cpt -K -O >> $OUTFILE#
+#pscoast $Projection $Range -W0.0001,100/100/100 -S255/255/255 -Xi -Yi -K -O >> $OUTFILE#
+psxy global_land.gmt $Projection $Range -W80/80/80 -Xi -Yi -K -O >> $OUTFILE#
+psxy mrb_basins_50k.gmt $Projection $Range -W50/50/50 -Xi -Yi -K -O >> $OUTFILE#
+
+pstext $Projection $Range -K -O -N << EOF >> $OUTFILE#
+-50 -40 18 0 4 TL @;black; TWS@
+EOF
+
+psscale -D6.0i/1.30i/6v/0.8v -Ctws_model_agree.cpt -Eb0.001f0.001 -B1 -O -K  >> $OUTFILE#
+
+pstext $Projection0 $Range -K -O -N << EOF >> $OUTFILE#
+-170 40 20 0 5 TL @;black; b
+
+50.75 -52.0 10 0 5 C @;black; 43.0
+50.75 -42.3 10 0 5 C @;black; 16.0
+50.75 -32.6 10 0 5 C @;black; 9.1
+50.75 -22.9 10 0 5 C @;black; 6.5
+50.75 -13.2 10 0 5 C @;black; 7.4
+50.75 -03.5 10 0 5 C @;black; 7.0
+50.75 006.2 10 0 5 C @;black; 7.4
+50.75 015.9 10 0 5 C @;black; 3.0
+50.75 025.6 10 0 5 C @;black; 0.5
+EOF
+
+
+############################### SM #########################
+
+sed 's/,/ /g' ../Results/MultimodelTrendsSeasonality/SM/Basinwise_noofmodels_goodness_SM.txt >! tmp1
+awk '{print $1,$2,$3}' tmp1 > MAP
+
+csh process_xyz2grd_0.50.scr MAP MAP.grd
+grdimage MAP.grd $Projection $Range -Xi -Y-7.5 -Csm_model_agree.cpt -K -O >> $OUTFILE#
+#pscoast $Projection $Range -W0.0001,100/100/100 -S255/255/255 -Xi -Yi -K -O >> $OUTFILE#
+psxy global_land.gmt $Projection $Range -W80/80/80 -Xi -Yi -K -O >> $OUTFILE#
+psxy mrb_basins_50k.gmt $Projection $Range -W50/50/50 -Xi -Yi -K -O >> $OUTFILE#
+
+pstext $Projection $Range -K -O -N << EOF >> $OUTFILE#
+-50 -40 18 0 4 TL @;black; Soil Moisture@
+EOF
+
+
+psscale -D6.0i/1.30i/6v/0.8v -Csm_model_agree.cpt -Eb0.001f0.001 -B1 -O -K  >> $OUTFILE#
+
+pstext $Projection0 $Range -K -O -N << EOF >> $OUTFILE#
+-170 40 20 0 5 TL @;black; c
+
+50.75 -52.0 10 0 5 C @;black; 13
+50.75 -42.3 10 0 5 C @;black; 16.1
+50.75 -32.6 10 0 5 C @;black; 14.3
+50.75 -22.9 10 0 5 C @;black; 13.5
+50.75 -13.2 10 0 5 C @;black; 8.7
+50.75 -03.5 10 0 5 C @;black; 8.3
+50.75 006.2 10 0 5 C @;black; 8.3
+50.75 015.9 10 0 5 C @;black; 13.5
+50.75 025.6 10 0 5 C @;black; 4.3
+EOF
+
+
+gmt set FONT_ANNOT_PRIMARY = 12p,Helvetica,black
+
+#---------------------------------------------------------------->>>>>>>>>>>>>>>>
+ps2epsi ForecastSkill.eps try.eps
+ps2epsi try.eps MainFig04_DIS_TWS_SM_Trends_Seasonality_Agreements.eps
+gv MainFig04_DIS_TWS_SM_Trends_Seasonality_Agreements.eps &
+convert -density 500 MainFig04_DIS_TWS_SM_Trends_Seasonality_Agreements.eps MainFig04_DIS_TWS_SM_Trends_Seasonality_Agreements.jpg
+
+rm tmp1 MAP MAP.grd ForecastSkill.eps try.eps
+echo "finished plotting"

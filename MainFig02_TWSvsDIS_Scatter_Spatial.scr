@@ -1,0 +1,379 @@
+#!/bin/csh -f
+## Fig 1, June 09, 2022
+
+## Nature Water, Fig. 2, September 15, 2024
+## By Amar Deep Tiwari (tiwaria6@msu.edu)
+
+gmtset MAP_FRAME_TYPE = plain
+gmt set FONT_ANNOT_PRIMARY = 9p,Helvetica,black
+##########################
+set OUTFILE = ForecastSkill.eps
+set Range = -R-40/40/-2.0/1.0
+set Projection = -JX16/18.2
+
+############################### CLIMATE ZONES #########################
+set Range0 = -R-180/180/-60/90
+set Projection0 = -JN8i
+set Projection1 = -JX9.6i/4i
+
+sed 's/,/ /g' ../Data/KöppenClimate/ClimateZones.txt >! tmp1
+awk '{print $1,$2,$4}' tmp1 > MAP
+
+csh process_xyz2grd_0.50.scr MAP MAP.grd
+
+grdimage MAP.grd $Projection0 $Range0 -X2 -Y30 -B30WesN -Cclimatezones_v3.cpt -K -P >! $OUTFILE#
+pscoast $Projection0 $Range0 -W0.0001,100/100/100 -S255/255/255 -Xi -Yi -K -O >> $OUTFILE#
+psxy mrb_basins.gmt $Projection0 $Range0 -W50/50/50 -Xi -Yi -K -O >> $OUTFILE#
+
+pstext $Projection1 $Range0 -K -O -N << EOF >> $OUTFILE#
+-185 82 24 0 5 C @;black; a
+EOF
+
+
+#Legends
+psxy $Projection1 $Range0 -Ss0.45 -G241/141/093 -W0.1,241/141/093 -K -O << EOF>> $OUTFILE#
+-156 0.0
+EOF
+psxy $Projection1 $Range0 -Ss0.45 -G254/201/109 -W0.1,254/201/109 -K -O << EOF>> $OUTFILE#
+-156 -10
+EOF
+psxy $Projection1 $Range0 -Ss0.45 -G170/213/101 -W0.1,170/213/101 -K -O << EOF>> $OUTFILE#
+-156 -20
+EOF
+psxy $Projection1 $Range0 -Ss0.45 -G058/187/180 -W0.1,058/187/180 -K -O << EOF>> $OUTFILE#
+-156 -30
+EOF
+psxy $Projection1 $Range0 -Ss0.45 -G019/116/190 -W0.1,019/116/190 -K -O << EOF>> $OUTFILE#
+-156 -40
+EOF
+
+pstext $Projection1 $Range0 -K -O -N << EOF >> $OUTFILE#
+-150 2.5 14 0 5 TL Tropical
+-150 -7.5 14 0 5 TL Arid
+-150 -17.75 14 0 5 TL Temperate
+-150 -28 14 0 5 TL Cold
+-150 -38 14 0 5 TL Polar
+EOF
+
+
+#Add locations
+sed 's/,/ /g' ./Data/lonlat_Score_KGE_BIAS_v3.txt >! tmpx
+awk '{ if($3<=0.4) print $1,$2}' tmpx >! SM1
+awk '{ if($3>0.4 && $3<=0.6) print $1,$2}' tmpx >! SM2
+awk '{ if($3>0.6 && $3<=0.7) print $1,$2}' tmpx >! SM3
+awk '{ if($3>0.7 && $3<=0.8) print $1,$2}' tmpx >! SM4
+awk '{ if($3>0.8) print $1,$2}' tmpx >! SM5
+
+psxy SM1 $Projection0 $Range0 -St0.20 -W0.5,black -Gblack -Xi -Yi -K -O >> $OUTFILE#
+psxy SM2 $Projection0 $Range0 -Sd0.20 -W0.5,black -Gblack -Xi -Yi -K -O >> $OUTFILE#
+psxy SM3 $Projection0 $Range0 -Sn0.20 -W0.5,black -Gblack -Xi -Yi -K -O >> $OUTFILE#
+psxy SM4 $Projection0 $Range0 -Sh0.20 -W0.5,black -Gblack -Xi -Yi -K -O >> $OUTFILE#
+psxy SM5 $Projection0 $Range0 -Sa0.20 -W0.5,black -Gblack -Xi -Yi -K -O >> $OUTFILE#
+
+#Legends
+
+psxy -JX9.6i/4i $Range -G220/220/220 -W0.01,grey -Xi -Yi -K -O << EOF >> $OUTFILE#
+04.0 -0.90
+04.0 -1.85
+11.0 -1.85
+11.0 -0.90
+EOF
+
+
+psxy $Projection1 $Range0 -St0.20 -W0.5,black -Gblack -K -O << EOF>> $OUTFILE#
+23 -20
+EOF
+psxy $Projection1 $Range0 -Sd0.20 -W0.5,black -Gblack -K -O << EOF>> $OUTFILE#
+23 -27
+EOF
+psxy $Projection1 $Range0 -Sn0.20 -W0.5,black -Gblack -K -O << EOF>> $OUTFILE#
+23 -34
+EOF
+psxy $Projection1 $Range0 -Sh0.20 -W0.5,black -Gblack -K -O << EOF>> $OUTFILE#
+23 -41
+EOF
+psxy $Projection1 $Range0 -Sa0.20 -W0.5,black -Gblack -K -O << EOF>> $OUTFILE#
+23 -48
+EOF
+
+
+pstext $Projection1 $Range0 -K -O -N << EOF >> $OUTFILE#
+30 -16.95 12 0 4 TL < 0.4
+30 -24.95 12 0 4 TL 0.4-0.6
+30 -31.95 12 0 4 TL 0.6-0.7
+30 -38.95 12 0 4 TL 0.7-0.8
+30 -45.95 12 0 4 TL > 0.8
+
+25 -8 14 0 5 TL Score
+EOF
+
+
+############################### DIS+TWS #########################
+
+
+sed 's/,/ /g' ./Data/BASIN_KGE_TWS_Diff_Area_v4.txt >! tmp1
+awk '{ if($4==1) print $5,$7,$6}' tmp1 >! SF1
+awk '{ if($4==2) print $5,$7,$6}' tmp1 >! SF2
+awk '{ if($4==3) print $5,$7,$6}' tmp1 >! SF3
+awk '{ if($4==4) print $5,$7,$6}' tmp1 >! SF4
+awk '{ if($4==5) print $5,$7,$6}' tmp1 >! SF5
+
+
+psxy $Projection $Range -B10:"TWS (% bias)":/0.5:"Discharge (KGE)"::."":WeSn -G210/230/229 -W0.01,grey -X22.5 -Y-9.25 -K -O <<EOF >> $OUTFILE#
+-15 0.2
+-15 1
+15 1
+15 0.2
+EOF
+
+psxy $Projection $Range -G247/227/206 -W0.01,grey -Xi -Yi -K -O << EOF >> $OUTFILE#
+-15 0.2
+-15 -1.99
+15 -1.99
+15 0.2
+EOF
+
+psxy $Projection $Range -G220/220/220 -W0.01,grey -Xi -Yi -K -O << EOF >> $OUTFILE#
+-36.5 -1.00
+-36.5 -1.65
+-19.5 -1.65
+-19.5 -1.00
+EOF
+
+#Tropical
+awk '{ if($1<=65000) print $2,$3}' SF1 >! SM1
+awk '{ if($1>65000 && $1<=100000) print $2,$3}' SF1 >! SM2
+awk '{ if($1>100000 && $1<=200000) print $2,$3}' SF1 >! SM3
+awk '{ if($1>200000 && $1<=500000) print $2,$3}' SF1 >! SM4
+awk '{ if($1>500000) print $2,$3}' SF1 >! SM5
+
+psxy SM1 $Projection $Range -Sc0.10 -G241/141/093 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+psxy SM2 $Projection $Range -Sc0.15 -G241/141/093 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+psxy SM3 $Projection $Range -Sc0.20 -G241/141/093 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+psxy SM4 $Projection $Range -Sc0.25 -G241/141/093 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+psxy SM5 $Projection $Range -Sc0.30 -G241/141/093 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+
+
+# Arid
+awk '{ if($1<=65000) print $2,$3}' SF2 >! SM1
+awk '{ if($1>65000 && $1<=100000) print $2,$3}' SF2 >! SM2
+awk '{ if($1>100000 && $1<=200000) print $2,$3}' SF2 >! SM3
+awk '{ if($1>200000 && $1<=500000) print $2,$3}' SF2 >! SM4
+awk '{ if($1>500000) print $2,$3}' SF2 >! SM5
+psxy SM1 $Projection $Range -Sc0.10 -G254/201/109 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+psxy SM2 $Projection $Range -Sc0.15 -G254/201/109 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+psxy SM3 $Projection $Range -Sc0.20 -G254/201/109 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+psxy SM4 $Projection $Range -Sc0.25 -G254/201/109 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+psxy SM5 $Projection $Range -Sc0.30 -G254/201/109 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+
+#Temperate
+awk '{ if($1<=65000) print $2,$3}' SF3 >! SM1
+awk '{ if($1>65000 && $1<=100000) print $2,$3}' SF3 >! SM2
+awk '{ if($1>100000 && $1<=200000) print $2,$3}' SF3 >! SM3
+awk '{ if($1>200000 && $1<=500000) print $2,$3}' SF3 >! SM4
+awk '{ if($1>500000) print $2,$3}' SF3 >! SM5
+psxy SM1 $Projection $Range -Sc0.10 -G170/213/101 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+psxy SM2 $Projection $Range -Sc0.15 -G170/213/101 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+psxy SM3 $Projection $Range -Sc0.20 -G170/213/101 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+psxy SM4 $Projection $Range -Sc0.25 -G170/213/101 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+psxy SM5 $Projection $Range -Sc0.30 -G170/213/101 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+
+
+#Cold
+awk '{ if($1<=65000) print $2,$3}' SF4 >! SM1
+awk '{ if($1>65000 && $1<=100000) print $2,$3}' SF4 >! SM2
+awk '{ if($1>100000 && $1<=200000) print $2,$3}' SF4 >! SM3
+awk '{ if($1>200000 && $1<=500000) print $2,$3}' SF4 >! SM4
+awk '{ if($1>500000) print $2,$3}' SF4 >! SM5
+psxy SM1 $Projection $Range -Sc0.10 -G058/187/180 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+psxy SM2 $Projection $Range -Sc0.15 -G058/187/180 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+psxy SM3 $Projection $Range -Sc0.20 -G058/187/180 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+psxy SM4 $Projection $Range -Sc0.25 -G058/187/180 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+psxy SM5 $Projection $Range -Sc0.30 -G058/187/180 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+
+
+#Polar
+awk '{ if($1<=65000) print $2,$3}' SF5 >! SM1
+awk '{ if($1>65000 && $1<=100000) print $2,$3}' SF5 >! SM2
+awk '{ if($1>100000 && $1<=200000) print $2,$3}' SF5 >! SM3
+awk '{ if($1>200000 && $1<=500000) print $2,$3}' SF5 >! SM4
+awk '{ if($1>500000) print $2,$3}' SF5 >! SM5
+psxy SM1 $Projection $Range -Sc0.10 -G019/116/190 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+psxy SM2 $Projection $Range -Sc0.15 -G019/116/190 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+psxy SM3 $Projection $Range -Sc0.20 -G019/116/190 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+psxy SM4 $Projection $Range -Sc0.25 -G019/116/190 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+psxy SM5 $Projection $Range -Sc0.30 -G019/116/190 -W0.07,black -Xi -Yi -K -O >> $OUTFILE#
+
+
+psxy $Projection $Range -Gblue -W0.1,black -Xi -Yi -K -O << EOF >> $OUTFILE#
+-40 0
+40 0
+EOF
+
+psxy $Projection $Range -Gblue -W0.1,black -Xi -Yi -K -O << EOF >> $OUTFILE#
+0 -2
+0 2
+EOF
+
+## Legends
+# colors
+#32/74/212, 212/196/78, 0/143/145, 204/41/41, 158/111/0
+
+psxy $Projection $Range -Sc0.20 -G241/141/093 -W0.1,241/141/093 -K -O << EOF>> $OUTFILE#
+-35 -1.20
+EOF
+psxy $Projection $Range -Sc0.20 -G254/201/109 -W0.1,254/201/109 -K -O << EOF>> $OUTFILE#
+-35 -1.30
+EOF
+psxy $Projection $Range -Sc0.20 -G170/213/101 -W0.1,170/213/101 -K -O << EOF>> $OUTFILE#
+-35 -1.40
+EOF
+psxy $Projection $Range -Sc0.20 -G058/187/180 -W0.1,058/187/180 -K -O << EOF>> $OUTFILE#
+-35 -1.50
+EOF
+psxy $Projection $Range -Sc0.20 -G019/116/190 -W0.1,019/116/190 -K -O << EOF>> $OUTFILE#
+-35 -1.60
+EOF
+
+pstext $Projection $Range -K -O -N << EOF >> $OUTFILE#
+-32 -1.17 12 0 5 TL Tropical
+-32 -1.27 12 0 5 TL Arid
+-32 -1.37 12 0 5 TL Temperate
+-32 -1.47 12 0 5 TL Cold
+-32 -1.57 12 0 5 TL Polar
+
+-28 -1.09 14 0 5 C Climate classes
+-48.0 1.1 22 0 5 C @;black; b
+EOF
+
+
+
+### Centroids
+## Legends
+
+psxy $Projection $Range -Sc0.40 -G241/141/093 -W0.5,black -K -O << EOF>> $OUTFILE#
+-0.5018  0.2552
+EOF
+psxy $Projection $Range -Sc0.40 -G254/201/109 -W0.5,black -K -O << EOF>> $OUTFILE#
+2.0348  0.2318
+EOF
+psxy $Projection $Range -Sc0.40 -G170/213/101 -W0.5,black -K -O << EOF>> $OUTFILE#
+2.0998  0.5997
+EOF
+psxy $Projection $Range -Sc0.40 -G058/187/180 -W0.5,black -K -O << EOF>> $OUTFILE#
+3.1344  0.4978
+EOF
+psxy $Projection $Range -Sc0.40 -G019/116/190 -W0.5,black -K -O << EOF>> $OUTFILE#
+10.9444  0.1741
+EOF
+
+
+# Area legend
+
+psxy $Projection $Range -G220/220/220 -W0.01,grey -Xi -Yi -K -O << EOF >> $OUTFILE#
+38.5 -1.00
+38.5 -1.65
+17.5 -1.65
+17.5 -1.00
+EOF
+
+psxy $Projection $Range -Sc0.10 -G0/0/0 -W0.1,0/0/0 -K -O << EOF>> $OUTFILE#
+24 -1.20
+EOF
+psxy $Projection $Range -Sc0.15 -G0/0/0 -W0.1,0/0/0 -K -O << EOF>> $OUTFILE#
+24 -1.30
+EOF
+psxy $Projection $Range -Sc0.20 -G0/0/0 -W0.1,0/0/0 -K -O << EOF>> $OUTFILE#
+24 -1.40
+EOF
+psxy $Projection $Range -Sc0.25 -G0/0/0 -W0.1,0/0/0 -K -O << EOF>> $OUTFILE#
+24 -1.50
+EOF
+psxy $Projection $Range -Sc0.30 -G0/0/0 -W0.1,0/0/0 -K -O << EOF>> $OUTFILE#
+24 -1.60
+EOF
+
+pstext $Projection $Range -K -O -N << EOF >> $OUTFILE#
+28 -1.17 12 0 5 TL 50-65
+28 -1.27 12 0 5 TL 65-100
+28 -1.37 12 0 5 TL 100-200
+28 -1.47 12 0 5 TL 200-500
+28 -1.57 12 0 5 TL >500
+
+28 -1.09 12 0 5 C Basin area (x1000 km@+2@+)
+
+
+
+20.63 0.721 14 0 4 TL Yellow
+23.96 -0.15	14 0 4 TL Hai
+09.68 0.93	14 0 4 TL Ganges
+-2.87 -1.6	14 0 4 TL Bandama
+-7.18 -0.33 14 0 4 TL Murray
+EOF
+
+
+############################### CWatM #########################
+set Range = -R-180/180/-60/90
+set Projection = -JX9.6i/4i
+set Projection0 = -JN8i
+
+sed 's/,/ /g' ./Data/lonlat_KGE_TWS_Comparison_v5.txt >! tmp1
+awk '{print $1,$2,$3}' tmp1 > MAP
+
+csh process_xyz2grd_0.50.scr MAP MAP.grd
+grdimage MAP.grd $Projection0 $Range -X-22.5 -Yi -B30WeSn -Ctws_dis_comp_v2.cpt -K -O >> $OUTFILE#
+pscoast $Projection0 $Range -W0.0001,100/100/100 -Swhite -Bwesn -Xi -Yi -K -O >> $OUTFILE#
+psxy mrb_basins.gmt $Projection0 $Range -W100/100/100 -Bwesn -Xi -Yi -K -O >> $OUTFILE#
+
+#psscale -D4.5i/-0.15i/14h/0.4h -Ctws_anom.cpt -E0.5 -L -N -O -K  >> $OUTFILE#
+
+pstext $Projection $Range -K -O -N << EOF >> $OUTFILE#
+-135 -41 12 0 4 C @;black; 0.1
+-120 -41 12 0 4 C @;black; 0.4
+-130 -48 14 0 4 C @;black; Discharge (KGE)
+
+-149 -25 12 90 4 C @;black; 5
+-149 -12 12 90 4 C @;black; 10
+
+-156 -20 14 90 4 C @;black; TWS (% bias)
+-185 70 24 0 5 C @;black; c
+EOF
+
+psxy $Projection $Range -Ss1.25 -G238/217/218 -K -O -N << EOF >> $OUTFILE#
+-140 -30
+EOF
+psxy $Projection $Range -Ss1.25 -G231/231/231 -K -O -N << EOF >> $OUTFILE#
+-127 -30
+EOF
+psxy $Projection $Range -Ss1.25 -G223/231/235 -K -O -N << EOF >> $OUTFILE#
+-114 -30
+EOF
+psxy $Projection $Range -Ss1.25 -G191/146/143 -K -O -N << EOF >> $OUTFILE#
+-140 -17
+EOF
+psxy $Projection $Range -Ss1.25 -G191/191/191 -K -O -N << EOF >> $OUTFILE#
+-127 -17
+EOF
+psxy $Projection $Range -Ss1.25 -G156/178/184 -K -O -N << EOF >> $OUTFILE#
+-114 -17
+EOF
+psxy $Projection $Range -Ss1.25 -G125/048/047 -K -O -N << EOF >> $OUTFILE#
+-140 -4
+EOF
+psxy $Projection $Range -Ss1.25 -G127/127/127 -K -O -N << EOF >> $OUTFILE#
+-127 -4
+EOF
+psxy $Projection $Range -Ss1.25 -G070/106/119 -K -O -N << EOF >> $OUTFILE#
+-114 -4
+EOF
+
+gmt set FONT_ANNOT_PRIMARY = 12p,Helvetica,black
+
+#---------------------------------------------------------------->>>>>>>>>>>>>>>>
+ps2epsi ForecastSkill.eps try.eps
+ps2epsi try.eps MainFig02_TWSvsDIS_Scatter_Spatial.eps
+gv MainFig02_TWSvsDIS_Scatter_Spatial.eps &
+convert -density 500 MainFig02_TWSvsDIS_Scatter_Spatial.eps MainFig02_TWSvsDIS_Scatter_Spatial.jpg
+
+rm tmp1 MAP MAP.grd tmpx SM1 SM2 SM3 SM4 SM5 SF1 SF2 SF3 SF4 SF5 ForecastSkill.eps try.eps
+echo "finished plotting"

@@ -1,0 +1,600 @@
+#!/bin/csh -f
+
+## Nature Water, Fig. 1, September 15, 2024
+## By Amar Deep Tiwari (tiwaria6@msu.edu)
+
+
+gmtset MAP_FRAME_TYPE = plain
+gmt set FONT_ANNOT_PRIMARY = 14p,Helvetica,black
+##########################
+set OUTFILE = ForecastSkill.eps
+
+set Range1 = -R0/100/0.1/0.65
+set Projection1 = -JX7/12
+
+
+############################### Ensemble #########################
+
+set Range0 = -R-180/180/-60/90
+set Projection0 = -JN10i
+
+sed 's/,/ /g' ./Data/DIS/Best3_10704_S/lonlat_KGE_All_10704_Stations_ensemble_median_al_4grids_v3.txt >! tmp2
+awk '{ if($3>-9999999) print $1,$2,$3}' tmp2 >! DIS
+
+pscoast $Projection0 $Range0 -G200/200/200 -Swhite -X2 -Y35 -K -P >! $OUTFILE#
+psxy mrb_basins_50k.gmt $Projection0 $Range0 -W150/150/150 -Xi -Yi -K -O >> $OUTFILE#
+psxy DIS $Projection0 $Range0 -Xi -Yi -Sc0.10 -Cdis_kge_6.cpt -K -O >> $OUTFILE#
+psxy global_land.gmt $Projection0 $Range0 -W150/150/150 -Xi -Yi -K -O >> $OUTFILE#
+
+psscale -D5.75i/0.5i/8h/0.4h -Cdis_kge_6.cpt -Eb0.8f0.0001 -L -N -O -K  >> $OUTFILE#
+
+pstext $Projection0 $Range0 -K -O -N << EOF >> $OUTFILE#
+125 -54 14 0 5 C @;black; (KGE)
+EOF
+
+
+
+############################### DIS+TWS #########################
+set Range = -R0/560/-1.8/0.9
+set Projection = -JX17/12
+
+#### All models
+
+psxy $Projection $Range -B560:"":/0.3:""::."":Wesn -W0.5p,black,- -X27 -Yi -K -O <<EOF >> $OUTFILE#
+40 -0.07
+40 0.54
+EOF
+
+psxy $Projection $Range -W2,black -Xi -Yi -K -O <<EOF >> $OUTFILE#
+25 0.24
+55 0.24
+EOF
+
+
+#Models, All
+#32/74/212, 212/196/78, 0/143/145, 204/41/41, 158/111/0
+psxy $Projection $Range -Sc0.25 -W1,177/089/040 -G177/089/040 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+40 0.31
+EOF
+psxy $Projection $Range -Sc0.25 -W1,166/206/227 -G166/206/227 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+40 0.37
+EOF
+psxy $Projection $Range -Sc0.25 -W1,106/061/154 -G106/061/154 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+40 0.36
+EOF
+psxy $Projection $Range -Sc0.25 -W1,255/127/000 -G255/127/000 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+40 0.17
+EOF
+psxy $Projection $Range -Sc0.25 -W1,178/223/138 -G178/223/138 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+40 0.00
+EOF
+psxy $Projection $Range -Sc0.25 -W1,251/154/153 -G251/154/153 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+40 0.04
+EOF
+psxy $Projection $Range -Sc0.25 -W1,031/120/180 -G031/120/180 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+40 -0.07
+EOF
+psxy $Projection $Range -Sc0.25 -W1,253/191/111 -G253/191/111 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+40 0.54
+EOF
+
+
+##Near natural
+
+psxy $Projection $Range -W0.5p,black,- -Xi -Yi -K -O <<EOF >> $OUTFILE#
+120 0.02
+120 0.54
+EOF
+
+psxy $Projection $Range -W2,black -Xi -Yi -K -O <<EOF >> $OUTFILE#
+105 0.36
+135 0.36
+EOF
+
+
+#Models, Near natural
+#32/74/212, 212/196/78, 0/143/145, 204/41/41, 158/111/0
+psxy $Projection $Range -Sc0.25 -W1,177/089/040 -G177/089/040 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+120 0.48
+EOF
+psxy $Projection $Range -Sc0.25 -W1,166/206/227 -G166/206/227 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+120 0.42
+EOF
+psxy $Projection $Range -Sc0.25 -W1,106/061/154 -G106/061/154 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+120 0.44
+EOF
+psxy $Projection $Range -Sc0.25 -W1,255/127/000 -G255/127/000 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+120 0.30
+EOF
+psxy $Projection $Range -Sc0.25 -W1,178/223/138 -G178/223/138 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+120 0.02
+EOF
+psxy $Projection $Range -Sc0.25 -W1,251/154/153 -G251/154/153 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+120 0.04
+EOF
+psxy $Projection $Range -Sc0.25 -W1,031/120/180 -G031/120/180 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+120 0.08
+EOF
+psxy $Projection $Range -Sc0.25 -W1,253/191/111 -G253/191/111 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+120 0.54
+EOF
+
+
+
+#### Managed 10-25
+
+psxy $Projection $Range -W0.5p,black,- -Xi -Yi -K -O <<EOF >> $OUTFILE#
+200 -0.04
+200 0.80
+EOF
+
+psxy $Projection $Range -W2,black -Xi -Yi -K -O <<EOF >> $OUTFILE#
+185 0.38
+215 0.38
+EOF
+
+
+#Models, Managed 10-25
+#177/089/040, 166/206/227, 106/061/154, 255/127/000, 251/154/153
+psxy $Projection $Range -Sc0.25 -W1,177/089/040 -G177/089/040 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+200 0.43
+EOF
+psxy $Projection $Range -Sc0.25 -W1,166/206/227 -G166/206/227 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+200 0.58
+EOF
+psxy $Projection $Range -Sc0.25 -W1,106/061/154 -G106/061/154 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+200 0.59
+EOF
+psxy $Projection $Range -Sc0.25 -W1,255/127/000 -G255/127/000 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+200 0.12
+EOF
+psxy $Projection $Range -Sc0.25 -W1,178/223/138 -G178/223/138 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+200 0.34
+EOF
+psxy $Projection $Range -Sc0.25 -W1,251/154/153 -G251/154/153 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+200 0.16
+EOF
+psxy $Projection $Range -Sc0.25 -W1,031/120/180 -G031/120/180 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+200 -0.04
+EOF
+psxy $Projection $Range -Sc0.25 -W1,253/191/111 -G253/191/111 -Xi -Yi -K -O -N <<EOF >> $OUTFILE#
+200 0.80
+EOF
+
+
+
+#### Managed 25-50
+
+psxy $Projection $Range -W0.5p,black,- -Xi -Yi -K -O <<EOF >> $OUTFILE#
+280 -0.10
+280 0.60
+EOF
+
+psxy $Projection $Range -W2,black -Xi -Yi -K -O <<EOF >> $OUTFILE#
+265 0.37
+295 0.37
+EOF
+
+
+#Models, Managed 25-50
+psxy $Projection $Range -Sc0.25 -W1,177/089/040 -G177/089/040 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+280 0.37
+EOF
+psxy $Projection $Range -Sc0.25 -W1,166/206/227 -G166/206/227 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+280 0.36
+EOF
+psxy $Projection $Range -Sc0.25 -W1,106/061/154 -G106/061/154 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+280 0.57
+EOF
+psxy $Projection $Range -Sc0.25 -W1,255/127/000 -G255/127/000 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+280 0.46
+EOF
+psxy $Projection $Range -Sc0.25 -W1,178/223/138 -G178/223/138 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+280 0.14
+EOF
+psxy $Projection $Range -Sc0.25 -W1,251/154/153 -G251/154/153 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+280 0.21
+EOF
+psxy $Projection $Range -Sc0.25 -W1,031/120/180 -G031/120/180 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+280 -0.10
+EOF
+psxy $Projection $Range -Sc0.25 -W1,253/191/111 -G253/191/111 -Xi -Yi -K -O -N <<EOF >> $OUTFILE#
+280 0.60
+EOF
+
+
+
+#### Managed 50-100
+
+psxy $Projection $Range -W0.5p,black,- -Xi -Yi -K -O <<EOF >> $OUTFILE#
+360 -0.05
+360 0.55
+EOF
+
+
+psxy $Projection $Range -W2,black -Xi -Yi -K -O <<EOF >> $OUTFILE#
+345 0.18
+375 0.18
+EOF
+
+#Models, Managed 50-100
+psxy $Projection $Range -Sc0.25 -W1,177/089/040 -G177/089/040 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+360 0.20
+EOF
+psxy $Projection $Range -Sc0.25 -W1,166/206/227 -G166/206/227 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+360 0.31
+EOF
+psxy $Projection $Range -Sc0.25 -W1,106/061/154 -G106/061/154 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+360 0.40
+EOF
+psxy $Projection $Range -Sc0.25 -W1,255/127/000 -G255/127/000 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+360 0.15
+EOF
+psxy $Projection $Range -Sc0.25 -W1,178/223/138 -G178/223/138 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+360 0.13
+EOF
+psxy $Projection $Range -Sc0.25 -W1,251/154/153 -G251/154/153 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+360 0.14
+EOF
+psxy $Projection $Range -Sc0.25 -W1,031/120/180 -G031/120/180 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+360 -0.05
+EOF
+psxy $Projection $Range -Sc0.25 -W1,253/191/111 -G253/191/111 -Xi -Yi -K -O -N <<EOF >> $OUTFILE#
+360 0.55
+EOF
+
+
+#### Managed 100-200
+
+psxy $Projection $Range -W0.5p,black,- -Xi -Yi -K -O <<EOF >> $OUTFILE#
+440 -0.22
+440 0.41
+EOF
+
+
+psxy $Projection $Range -W2,black -Xi -Yi -K -O <<EOF >> $OUTFILE#
+425 0.01
+455 0.01
+EOF
+
+
+#Models, Managed 100-200
+psxy $Projection $Range -Sc0.25 -W1,177/089/040 -G177/089/040 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+440 0.07
+EOF
+psxy $Projection $Range -Sc0.25 -W1,166/206/227 -G166/206/227 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+440 0.21
+EOF
+psxy $Projection $Range -Sc0.25 -W1,106/061/154 -G106/061/154 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+440 -0.05
+EOF
+psxy $Projection $Range -Sc0.25 -W1,255/127/000 -G255/127/000 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+440 0.08
+EOF
+psxy $Projection $Range -Sc0.25 -W1,178/223/138 -G178/223/138 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+440 -0.05
+EOF
+psxy $Projection $Range -Sc0.25 -W1,251/154/153 -G251/154/153 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+440 -0.04
+EOF
+psxy $Projection $Range -Sc0.25 -W1,031/120/180 -G031/120/180 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+440 -0.22
+EOF
+psxy $Projection $Range -Sc0.25 -W1,253/191/111 -G253/191/111 -Xi -Yi -K -O -N <<EOF >> $OUTFILE#
+440 0.41
+EOF
+
+
+#### Managed >200
+
+psxy $Projection $Range -W0.5p,black,- -Xi -Yi -K -O <<EOF >> $OUTFILE#
+520 -1.71
+520 0.34
+EOF
+
+
+psxy $Projection $Range -W2,black -Xi -Yi -K -O <<EOF >> $OUTFILE#
+505 -0.32
+535 -0.32
+EOF
+
+#Models, Managed >200
+psxy $Projection $Range -Sc0.25 -W1,177/089/040 -G177/089/040 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+520 -1.71
+EOF
+psxy $Projection $Range -Sc0.25 -W1,166/206/227 -G166/206/227 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+520 -0.01
+EOF
+psxy $Projection $Range -Sc0.25 -W1,106/061/154 -G106/061/154 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+520 0.08
+EOF
+psxy $Projection $Range -Sc0.25 -W1,255/127/000 -G255/127/000 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+520 -0.77
+EOF
+psxy $Projection $Range -Sc0.25 -W1,178/223/138 -G178/223/138 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+520 -1.21
+EOF
+psxy $Projection $Range -Sc0.25 -W1,251/154/153 -G251/154/153 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+520 -0.14
+EOF
+psxy $Projection $Range -Sc0.25 -W1,031/120/180 -G031/120/180 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+520 -0.50
+EOF
+psxy $Projection $Range -Sc0.25 -W1,253/191/111 -G253/191/111 -Xi -Yi -K -O -N <<EOF >> $OUTFILE#
+520 0.34
+EOF
+
+
+
+pstext $Projection $Range -K -O -N << EOF >> $OUTFILE#
+040 -1.83 15 45 5 TR @;black; All
+120 -1.83 15 45 5 TR @;black; Near-natural
+200 -1.83 15 45 5 TR @;black; 10-25 %
+280 -1.83 15 45 5 TR @;black; 25-50 %
+360 -1.83 15 45 5 TR @;black; 50-100 %
+440 -1.83 15 45 5 TR @;black; 100-200 %
+520 -1.83 15 45 5 TR @;black; >200 %
+
+-55 -0.45 17 90 5 C @;black; KGE
+
+280 -2.45 17 0 5 C @;black; DOR
+EOF
+
+
+
+
+##Legends
+psxy $Projection $Range -G240/240/240 -W0.00001,240/240/240 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+100 -0.35
+285 -0.35
+285 -1.6
+100 -1.6
+EOF
+
+psxy $Projection $Range -Sc0.25 -W1,177/089/040 -G177/089/040 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+120 -0.45
+EOF
+psxy $Projection $Range -Sc0.25 -W1,166/206/227 -G166/206/227 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+120 -0.60
+EOF
+psxy $Projection $Range -Sc0.25 -W1,106/061/154 -G106/061/154 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+120 -0.75
+EOF
+psxy $Projection $Range -Sc0.25 -W1,255/127/000 -G255/127/000 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+120 -0.90
+EOF
+psxy $Projection $Range -Sc0.25 -W1,178/223/138 -G178/223/138 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+120 -1.05
+EOF
+psxy $Projection $Range -Sc0.25 -W1,251/154/153 -G251/154/153 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+120 -1.20
+EOF
+psxy $Projection $Range -Sc0.25 -W1,031/120/180 -G031/120/180 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+120 -1.35
+EOF
+psxy $Projection $Range -Sc0.25 -W1,253/191/111 -G253/191/111 -Xi -Yi -K -O <<EOF >> $OUTFILE#
+120 -1.50
+EOF
+
+
+pstext $Projection $Range -K -O -N << EOF >> $OUTFILE#
+130 -0.42 12 0 4 TL @;black; CWatM
+130 -0.57 12 0 4 TL @;black; H08
+130 -0.72 12 0 4 TL @;black; HydroPy
+130 -0.87 12 0 4 TL @;black; JULES-W2
+130 -1.02 12 0 4 TL @;black; LPJmL5-7-10-fire
+130 -1.17 12 0 4 TL @;black; MIROC-INTEG-LAND
+130 -1.32 12 0 4 TL @;black; ORCHIDEE-MICT
+130 -1.47 12 0 4 TL @;black; WaterGAP2-2e
+EOF
+
+
+#ticks
+psxy $Projection $Range -W1,black -Xi -Yi -K -O <<EOF >> $OUTFILE#
+40 -1.76
+40 -1.80
+EOF
+psxy $Projection $Range -W1,black -Xi -Yi -K -O <<EOF >> $OUTFILE#
+120 -1.76
+120 -1.80
+EOF
+psxy $Projection $Range -W1,black -Xi -Yi -K -O <<EOF >> $OUTFILE#
+200 -1.76
+200 -1.80
+EOF
+psxy $Projection $Range -W1,black -Xi -Yi -K -O <<EOF >> $OUTFILE#
+280 -1.76
+280 -1.80
+EOF
+psxy $Projection $Range -W1,black -Xi -Yi -K -O <<EOF >> $OUTFILE#
+360 -1.76
+360 -1.80
+EOF
+psxy $Projection $Range -W1,black -Xi -Yi -K -O <<EOF >> $OUTFILE#
+440 -1.76
+440 -1.80
+EOF
+psxy $Projection $Range -W1,black -Xi -Yi -K -O <<EOF >> $OUTFILE#
+520 -1.76
+520 -1.80
+EOF
+
+
+###____________________________________________________________ TWS
+set Range = -R-180/180/-60/90
+set Projection2 = -JX9.6i/4i
+
+
+############################### ENS #########################
+
+#sed 's/,/ /g' ./Data/TWS/tws_trends_grace_isimip_basinwise_2002_2019_actual_median_v2.txt >! tmp1
+sed 's/,/ /g' ../Results/TWS/tws_trends_grace_isimip_median_basinwise_2002_2019_vf2.txt >! tmp1
+awk '{print $1,$2,$4}' tmp1 > MAP
+
+csh process_xyz2grd_0.50.scr MAP MAP.grd
+grdimage MAP.grd $Projection0 $Range -X-7 -Y-15 -Ctws_trends_n3.cpt -K -O >> $OUTFILE#
+pscoast $Projection0 $Range -W0.0001,100/100/100 -S255/255/255 -Xi -Yi -K -O >> $OUTFILE#
+psxy mrb_basins_50k.gmt $Projection0 $Range -W50/50/50 -Xi -Yi -K -O >> $OUTFILE#
+
+pstext $Projection0 $Range -K -O -N << EOF >> $OUTFILE#
+-50 -40 18 0 4 TL @;black; Ensemble median
+
+50 -10 17 0 4 TL @;black; Indus@
+80 -10 17 0 4 TL @;black; Ganges@
+140 26.3 17 0 4 TL @;black; Yellow@
+EOF
+
+psxy $Projection0 $Range -W0.5,black -Xi -Yi -K -O <<EOF >> $OUTFILE#
+71 32
+60 -10
+EOF
+psxy $Projection0 $Range -W0.5,black -Xi -Yi -K -O <<EOF >> $OUTFILE#
+82 27
+92 -10
+EOF
+psxy $Projection0 $Range -W0.5,black -Xi -Yi -K -O <<EOF >> $OUTFILE#
+106.5 37.3
+140 25
+EOF
+
+pstext $Projection2 $Range -K -O -N << EOF >> $OUTFILE#
+-120 110 27 0 5 TL @;black; d
+-120 345 27 0 5 TL @;black; b
+EOF
+
+
+############################### GRACE #########################
+
+#sed 's/,/ /g' ./Data/TWS/tws_trends_grace_isimip_basinwise_2002_2019_actual_median_v2.txt >! tmp1
+sed 's/,/ /g' ../Results/TWS/tws_trends_grace_isimip_median_basinwise_2002_2019_vf2.txt >! tmp1
+awk '{print $1,$2,$3}' tmp1 > MAP
+
+csh process_xyz2grd_0.50.scr MAP MAP.grd
+
+grdimage MAP.grd $Projection0 $Range -X-20 -Yi -Ctws_trends_n3.cpt -K -O >> $OUTFILE#
+pscoast $Projection0 $Range -W0.0001,100/100/100 -S255/255/255 -Xi -Yi -K -O >> $OUTFILE#
+psxy mrb_basins_50k.gmt $Projection0 $Range -W50/50/50 -Xi -Yi -K -O >> $OUTFILE#
+
+
+sed 's/,/ /g' ./Data/sig_trends_tws_grids.txt >! GRDS
+psxy GRDS $Projection0 $Range -Sc0.05 -Gblack -W0.1,black -Xi -Yi -K -O >> $OUTFILE#
+
+pstext $Projection0 $Range -K -O -N << EOF >> $OUTFILE#
+-50 -40 18 0 4 TL @;black; GRACE@
+
+180 -60 18 0 4 C @;black; TWS trends (mm/year)
+
+-65 35 16 0 4 TL @;black; Mississippi@
+-125 -10 16 0 4 TL @;black; Amazon@
+58 00 16 0 4 TL @;black; Nile@
+
+-50 -40 18 0 4 TL @;black; GRACE@
+EOF
+
+psxy $Projection0 $Range -W0.5,black -Xi -Yi -K -O <<EOF >> $OUTFILE#
+-92 40
+-64 33
+EOF
+psxy $Projection0 $Range -W0.5,black -Xi -Yi -K -O <<EOF >> $OUTFILE#
+-67 -07
+-92 -12
+EOF
+psxy $Projection0 $Range -W0.5,black -Xi -Yi -K -O <<EOF >> $OUTFILE#
+31 16
+56 -2
+EOF
+
+pstext $Projection2 $Range -K -O -N << EOF >> $OUTFILE#
+-120 110 27 0 5 TL @;black; c
+-120 345 27 0 5 TL @;black; a
+EOF
+
+#psxy $Projection2 $Range -W0.01,grey -Xi -Yi -K -O << EOF >> $OUTFILE#
+#-360 70
+#-360 -60
+#180 -60
+#180 70
+#EOF
+
+psscale -D10.00i/-0.20i/15h/0.6h -Ctws_trends_n3.cpt -E0.8 -L -N -O -K  >> $OUTFILE#
+
+
+############################### Best model #########################
+
+sed 's/,/ /g' ../Results/TWS/MultimodelTrends/LeastDeviatingModel_TWSTrends.txt >! tmp1
+awk '{print $1,$2,$3}' tmp1 > MAP
+
+csh process_xyz2grd_0.50.scr MAP MAP.grd
+grdimage MAP.grd $Projection0 $Range -X20 -Y-14 -Ctws_trends_agree_v6.cpt -K -O >> $OUTFILE#
+pscoast $Projection0 $Range0 -W0.0001,100/100/100 -S255/255/255 -Xi -Yi -K -O >> $OUTFILE#
+psxy mrb_basins.gmt $Projection0 $Range -W50/50/50 -Xi -Yi -K -O >> $OUTFILE#
+
+pstext $Projection0 $Range -K -O -N << EOF >> $OUTFILE#
+-35 -55 18 0 4 TL @;black; Least deviating model@
+EOF
+
+pstext $Projection2 $Range -K -O -N << EOF >> $OUTFILE#
+-120 110 27 0 5 TL @;black; f
+
+
+-90.0 -78 15 45 4 TR @;black; CWatM
+-65.5 -78 15 45 4 TR @;black; H08
+-36.0 -78 15 45 4 TR @;black; HydroPy
+-06.5 -78 15 45 4 TR @;black; JULES-W2
+023.0 -78 15 45 4 TR @;black; LPJmL5-7-10-fire
+052.5 -78 15 45 4 TR @;black; MIROC-INTEG-LAND
+082.0 -78 15 45 4 TR @;black; ORCHIDEE-MICT
+111.5 -78 15 45 4 TR @;black; WaterGAP2-2e
+EOF
+
+psscale -D5.0i/-0.20i/16h/0.6h -Ctws_trends_agree_v6.cpt -Eb0.001f0.001 -B0 -O -K  >> $OUTFILE#
+
+############################### Agreemnts #########################
+
+sed 's/,/ /g' ../Results/TWS/MultimodelTrends/NoOfModelsAgreeing_TWSTrends.txt >! tmp1
+awk '{print $1,$2,$3}' tmp1 > MAP
+
+csh process_xyz2grd_0.50.scr MAP MAP.grd
+
+grdimage MAP.grd $Projection0 $Range -X-20 -Yi -Ctws_trends_agree_v4.cpt -K -O >> $OUTFILE#
+pscoast $Projection0 $Range -W0.0001,100/100/100 -S255/255/255 -Xi -Yi -K -O >> $OUTFILE#
+psxy mrb_basins_50k.gmt $Projection0 $Range -W50/50/50 -Xi -Yi -K -O >> $OUTFILE#
+
+pstext $Projection0 $Range -K -O -N << EOF >> $OUTFILE#
+#-50 -95 18 0 4 TL @;black; No of models agreeing@
+EOF
+
+pstext $Projection2 $Range -K -O -N << EOF >> $OUTFILE#
+-120 110 27 0 5 TL @;black; e
+
+-95 -65 15 0 4 C @;black; 10.0
+-69 -65 15 0 4 C @;black; 10.4
+-43 -65 15 0 4 C @;black; 4.3
+-17 -65 15 0 4 C @;black; 7.4
+9 -65 15 0 4 C @;black; 5.7
+36 -65 15 0 4 C @;black; 6.5
+61 -65 15 0 4 C @;black; 8.3
+87 -65 15 0 4 C @;black; 14.3
+113 -65 15 0 4 C @;black; 33.0
+
+135.0 -65 14 0 4 C @;black; (%)
+
+9 -50 20 0 4 C @;black; Percentage of basins agreeing@
+
+9.0 -100 20 0 4 C @;black; Number of models agreeing@
+EOF
+
+psscale -D5.0i/-0.20i/16h/0.6h -Ctws_trends_agree_v4.cpt -Eb0.001f0.001 -B1 -O -K  >> $OUTFILE#
+
+
+
+gmt set FONT_ANNOT_PRIMARY = 12p,Helvetica,black
+
+#---------------------------------------------------------------->>>>>>>>>>>>>>>>
+ps2epsi ForecastSkill.eps try.eps
+ps2epsi try.eps MainFig01_DIS_TWS_Skills.eps
+gv MainFig01_DIS_TWS_Skills.eps &
+convert -density 300 MainFig01_DIS_TWS_Skills.eps MainFig01_DIS_TWS_Skills.jpg
+
+rm tmp2 DIS tmp1 MAP MAP.grd GRDS ForecastSkill.eps try.eps
+echo "finished plotting"
